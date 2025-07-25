@@ -3,16 +3,17 @@ namespace UKParliament.CodeTest.Data;
 
 public class Person
 {
+
     public int Id { get; set; }
-
     [Required(AllowEmptyStrings = false)]
-    public required string FirstName { get; set; }
-
+    public string FirstName { get; set; } = default!;
     [Required(AllowEmptyStrings = false)]
-    public required string LastName { get; set; }
+    public string LastName { get; set; } = default!;
+    public DateTime DateOfBirth { get; set; }
 
-    [Required(AllowEmptyStrings = false)]
-    public required DateTime DateOfBirth { get; set; }
+    public int DeptId { get; set; }             // Foreign key
+    public Department Dept { get; set; } = default!; // Navigation property — not required by C#
 
-    public required Department Dept { get; set; }
+    
+ 
 }

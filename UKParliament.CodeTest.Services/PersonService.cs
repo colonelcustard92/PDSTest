@@ -4,30 +4,58 @@ namespace UKParliament.CodeTest.Services;
 
 public class PersonService : IPersonService
 {
-    private readonly List<Person> _people = new List<Person>();
+    private readonly PersonManagerContext _context;
 
-    PersonManagerContext _context = new PersonManagerContext();
-
-    public PersonService()
+    public PersonService(PersonManagerContext context)
     {
-        
-        // Initialize with some sample data
-        _people.Add(new Person { Id = 1, FirstName = "John", LastName = "Doe", DateOfBirth = new DateTime(1990, 1, 1), Dept = new Department { Id = 1, Name = "Finance" } });
-        _people.Add(new Person { Id = 2, FirstName = "Jane", LastName = "Smith", DateOfBirth = new DateTime(1985, 5, 15), Dept = new Department { Id = 2, Name = "Human Resources" } });
-        _people.Add(new Person { Id = 3, FirstName = "Alice", LastName = "Johnson", DateOfBirth = new DateTime(1992, 3, 20), Dept = new Department { Id = 3, Name = "Information Technology" } });
-        _people.Add(new Person { Id = 4, FirstName = "Bob", LastName = "Brown", DateOfBirth = new DateTime(1988, 7, 30), Dept = new Department { Id = 4, Name = "Marketing" } });
-        _people.Add(new Person { Id = 5, FirstName = "Charlie", LastName = "Davis", DateOfBirth = new DateTime(1995, 12, 10), Dept = new Department { Id = 5, Name = "Operations" } });
-        _people.Add(new Person { Id = 6, FirstName = "Eve", LastName = "White", DateOfBirth = new DateTime(1993, 11, 25), Dept = new Department { Id = 1, Name = "Finance" } });
+        _context = context;
     }
 
     public IEnumerable<Person> GetAllPeople()
     {
-        return _people;
+        return _context.People.ToList();
     }
 
     public Person? GetPersonById(int id)
     {
-        return _people.FirstOrDefault(p => p.Id == id);
+        return _context.People.FirstOrDefault(p => p.Id == id);
     }
+
+    public void AddPerson(Person person)
+    {
+        if (person == null) throw new ArgumentNullException(nameof(person));
+        _context.People.Add(person);
+        _context.SaveChanges();
+       
+    }
+
+    public void DeletePerson(int id)
+    {
+    
+        var person = _context.People.FirstOrDefault(p => p.Id == id);
+        if (person != null)
+        {
+            _context.People.Remove(person);
+            _context.SaveChanges();
+        }
+    }
+
+    public void UpdateUser(Person person)
+    {
+        var personData = _context.People.FirstOrDefault(p => p.Id == person.Id);
+        if (personData != null)
+        {
+            // Update properties as needed
+            personData.FirstName = person.FirstName;
+            personData.LastName = person.LastName;
+            personData.DateOfBirth = person.DateOfBirth;
+            personData.DeptId = person.DeptId;
+            personData.Dept = person.Dept;
+           
+            _context.SaveChanges();
+        }
+
+    }
+    
 
 }
